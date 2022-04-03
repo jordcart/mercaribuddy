@@ -1,0 +1,8 @@
+**What does this bot do?**
+This bot allows you to set keywords on mercari.jp and get notified when a new post is made.
+
+**Commands:**
+**!add (keywords)**: add a keyword that you want to be notified about.
+**!delete (keywords)**: delete a keyword that you have set.
+**!deleteall**: delete all currently tracked keywords. 
+**!list**: display a list of all currently added keywords
