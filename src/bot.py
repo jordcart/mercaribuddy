@@ -155,17 +155,18 @@ def create_embed(listing):
     embed.set_image(url=thumbnail)
     return embed
 
-@tasks.loop(hours=18.0)
-async def get_new_token():
-    global token
-    response = token_gen.get_token()
-    if response != "":
-        token = response
+# @tasks.loop(hours=18.0)
+# async def get_new_token():
+#     global token
+#     response = token_gen.get_token()
+#     if response != "":
+#         token = response
 
 @tasks.loop(seconds=30.0)
 async def search_loop():
     global connection
     global cursor
+    global token
     # check for database connection
     result = database.verify_db_connection(connection, cursor)
 
@@ -183,6 +184,10 @@ async def search_loop():
 
         # get listings matching keyword from mercari
         listings = await mercari.get_item_list(keyword, token)
+        if listings == False:
+            token = token_gen.get_token()
+            print("getting a new token")
+            continue
 
         max_time = 0
         try:
@@ -201,9 +206,9 @@ async def search_loop():
             database.update_entry(connection, cursor, user_id, keyword, max_time)
 
 
-@get_new_token.before_loop
-async def before_token_loop():
-    await bot.wait_until_ready()
+# @get_new_token.before_loop
+# async def before_token_loop():
+#     await bot.wait_until_ready()
 
 @search_loop.before_loop
 async def before_search():
@@ -224,10 +229,10 @@ def escape_chars(string):
     return new_string
 
 if __name__ == "__main__":
-    token = token_gen.get_token()
+    # token = token_gen.get_token()
 
     # starting scraper in seperate coroutine 
     search_loop.start()
-    get_new_token.start()
+    # get_new_token.start()
     # starting bot on main thread
     bot.run(TOKEN)

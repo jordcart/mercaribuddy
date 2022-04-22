@@ -36,4 +36,4 @@ async def get_item_list(keyword, token):
         print(r.status_code)
         print(r.reason)
         print(r.text)
-        return []
+        return False 
