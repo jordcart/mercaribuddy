@@ -1,5 +1,20 @@
 import psycopg2
 
+def database_setup(connection, cur):
+    sql = """CREATE TABLE IF NOT EXISTS Searches (
+        discord_id VARCHAR(255) PRIMARY KEY,
+        keyword VARCHAR(255) NOT NULL,
+        last_check BIGINT NOT NULL,
+        listings_found INT NOT NULL);"""
+
+    try:
+        cur.execute(sql)
+        connection.commit()
+        return True
+    except Exception as error:
+        print(error)
+        return False
+
 def verify_db_connection(connection, cur):
     try:
         cur.execute("SELECT;")

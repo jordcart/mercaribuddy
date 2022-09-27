@@ -206,11 +206,6 @@ async def search_loop():
         if max_time > time:
             database.update_entry(connection, cursor, user_id, keyword, max_time)
 
-
-# @get_new_token.before_loop
-# async def before_token_loop():
-#     await bot.wait_until_ready()
-
 @search_loop.before_loop
 async def before_search():
     await bot.wait_until_ready()
@@ -230,10 +225,10 @@ def escape_chars(string):
     return new_string
 
 if __name__ == "__main__":
-    # token = token_gen.get_token()
-
-    # starting scraper in seperate coroutine 
-    search_loop.start()
-    # get_new_token.start()
-    # starting bot on main thread
-    bot.run(TOKEN)
+    if database.database_setup(connection, cursor):
+        token = token_gen.get_token()
+        # starting scraper in seperate coroutine
+        search_loop.start()
+        # get_new_token.start()
+        # starting bot on main thread
+        bot.run(TOKEN)

@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.options import Options
 from seleniumwire import webdriver  # Import from seleniumwire
 
 def get_token():
+    print('getting a token')
     options = Options()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
