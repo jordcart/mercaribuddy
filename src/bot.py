@@ -179,9 +179,9 @@ async def search_loop():
     entries = database.get_all_entries(connection, cursor)
     # get a list containing all of the found listings
     for entry in entries:
-        user_id = entry[0]
-        keyword = entry[1]
-        time = entry[2]
+        user_id = entry[1]
+        keyword = entry[2]
+        time = entry[3]
 
         # get listings matching keyword from mercari
         listings = await mercari.get_item_list(keyword, token)

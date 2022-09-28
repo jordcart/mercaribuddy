@@ -2,7 +2,8 @@ import psycopg2
 
 def database_setup(connection, cur):
     sql = """CREATE TABLE IF NOT EXISTS Searches (
-        discord_id VARCHAR(255) PRIMARY KEY,
+        auto_id SERIAL PRIMARY KEY,
+        discord_id VARCHAR(255) NOT NULL,
         keyword VARCHAR(255) NOT NULL,
         last_check BIGINT NOT NULL,
         listings_found INT NOT NULL);"""
