@@ -81,6 +81,7 @@ async def add(ctx, *search):
         result = database.add_to_database(connection, cursor, ctx.message.author.id, mercari_search, current_time)
 
         if result == True:
+            database.add_listing(connection, cursor)
             await ctx.send("Now tracking all new posts with the keyword **{}**.".format(mercari_search))
             await set_status()
         elif result == False:
@@ -156,12 +157,6 @@ def create_embed(listing):
     embed.set_image(url=thumbnail)
     return embed
 
-# @tasks.loop(hours=18.0)
-# async def get_new_token():
-#     global token
-#     response = token_gen.get_token()
-#     if response != "":
-#         token = response
 
 @tasks.loop(seconds=30.0)
 async def search_loop():
@@ -192,13 +187,17 @@ async def search_loop():
 
         max_time = 0
         try:
+            found_listings = 0
             for l in listings['items']:
                 post_created = int(l['created'])
                 if post_created > time:
+                    found_listings += 1
                     max_time = max(max_time, post_created)
                     user = await bot.fetch_user(user_id)
                     embed = create_embed(l)
                     await user.send("New search result for keyword **{}**.".format(keyword), embed=embed)
+
+            database.add_found_listings(connection, cursor, found_listings)
         except Exception as e:
             print(e)
             print(listings)

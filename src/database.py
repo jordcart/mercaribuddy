@@ -1,6 +1,7 @@
 import psycopg2
 
-def database_setup(connection, cur):
+
+def create_searches_table(connection, cur):
     sql = """CREATE TABLE IF NOT EXISTS Searches (
         auto_id SERIAL PRIMARY KEY,
         discord_id VARCHAR(255) NOT NULL,
@@ -15,6 +16,31 @@ def database_setup(connection, cur):
     except Exception as error:
         print(error)
         return False
+
+
+def create_stats_table(connection, cur):
+    sql = """CREATE TABLE IF NOT EXISTS Stats (
+        auto_id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL UNIQUE,
+        all_users INT DEFAULT 0,
+        all_listings INT DEFAULT 0,
+        all_found INT DEFAULT 0);"""
+
+    create_default_entry = "INSERT INTO Stats (name) VALUES ('main') ON CONFLICT (name) DO NOTHING;"
+
+    try:
+        cur.execute(sql)
+        cur.execute(create_default_entry)
+        connection.commit()
+        return True
+    except Exception as error:
+        print(error)
+        return False
+
+
+def database_setup(connection, cur):
+    return create_searches_table(connection, cur) and create_stats_table(connection, cur)
+
 
 def verify_db_connection(connection, cur):
     try:
